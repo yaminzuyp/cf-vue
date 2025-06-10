@@ -1,4 +1,8 @@
 {
   "name": "cf-vue",
   "compatibility_date": "2025-05-05",
-}
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "binding": "ASSETS"
+  }
+  }
