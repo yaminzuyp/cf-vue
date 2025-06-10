@@ -3,6 +3,6 @@
   "compatibility_date": "2025-05-05",
   "assets": {
     "directory": "./dist",
-    "serve_single_page_app": true
+    "not_found_handling": "single-page-application"
   }
 }
