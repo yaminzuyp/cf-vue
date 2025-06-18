@@ -1,13 +1,244 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
+<html lang="id">
+<head>
     <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+    <title>ChatUYP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #000;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: white;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 18px;
+            background-color: #f9f9f9;
+            position: relative;
+            max-width: 70%;
+            width: fit-content;
+            margin-left: auto;
+        }
+
+        .message-text {
+            margin-bottom: 5px;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .edit-btn {
+            background-color: #000;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .edit-btn:hover {
+            background-color: #333;
+        }
+
+        .edit-input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #000;
+            border-radius: 15px;
+            margin-bottom: 5px;
+        }
+
+        .save-btn, .cancel-btn {
+            background-color: #000;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 5px;
+        }
+
+        .cancel-btn {
+            background-color: #666;
+        }
+
+        .save-btn:hover {
+            background-color: #333;
+        }
+
+        .cancel-btn:hover {
+            background-color: #888;
+        }
+
+        .input-area {
+            background-color: #000;
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .send-btn {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .send-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .empty-chat {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        ChatUYP
+    </div>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="empty-chat">Belum ada pesan. Mulai percakapan!</div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" class="message-input" id="messageInput" placeholder="Ketik pesan..." maxlength="500">
+        <button class="send-btn" onclick="sendMessage()">Kirim</button>
+    </div>
+
+    <script>
+        let messages = [];
+        let messageIdCounter = 1;
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (text === '') return;
+
+            const message = {
+                id: messageIdCounter++,
+                text: text,
+                time: new Date().toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                })
+            };
+
+            messages.push(message);
+            input.value = '';
+            renderMessages();
+        }
+
+        function renderMessages() {
+            const container = document.getElementById('chatContainer');
+            
+            if (messages.length === 0) {
+                container.innerHTML = '<div class="empty-chat">Belum ada pesan. Mulai percakapan!</div>';
+                return;
+            }
+
+            container.innerHTML = messages.map(message => `
+                <div class="message" id="message-${message.id}">
+                    <div class="message-time">${message.time}</div>
+                    <div class="message-text" id="text-${message.id}">${message.text}</div>
+                    <button class="edit-btn" onclick="editMessage(${message.id})">Edit</button>
+                </div>
+            `).join('');
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function editMessage(messageId) {
+            const message = messages.find(m => m.id === messageId);
+            const messageElement = document.getElementById(`message-${messageId}`);
+            
+            messageElement.innerHTML = `
+                <div class="message-time">${message.time}</div>
+                <input type="text" class="edit-input" id="edit-input-${messageId}" value="${message.text}" maxlength="500">
+                <button class="save-btn" onclick="saveEdit(${messageId})">Simpan</button>
+                <button class="cancel-btn" onclick="cancelEdit(${messageId})">Batal</button>
+            `;
+
+            document.getElementById(`edit-input-${messageId}`).focus();
+        }
+
+        function saveEdit(messageId) {
+            const newText = document.getElementById(`edit-input-${messageId}`).value.trim();
+            
+            if (newText === '') return;
+
+            const message = messages.find(m => m.id === messageId);
+            message.text = newText;
+            renderMessages();
+        }
+
+        function cancelEdit(messageId) {
+            renderMessages();
+        }
+
+        // Enter key untuk kirim pesan
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Enter key untuk simpan edit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.target.classList.contains('edit-input')) {
+                const messageId = e.target.id.split('-')[2];
+                saveEdit(parseInt(messageId));
+            }
+        });
+    </script>
+</body>
 </html>
