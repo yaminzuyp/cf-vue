@@ -6,3 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
     avatar TEXT
 );
 
+CREATE TABLE IF NOT EXISTS chats (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    message TEXT NOT NULL
+);
+
