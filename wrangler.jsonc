@@ -5,7 +5,7 @@
     "not_found_handling": "single-page-application",
     "binding": "ASSETS"
   },
-  "main": "api/index.ts",
+  "main": "api/index.js",
   "d1_databases": [
     {
       "binding": "DB",
