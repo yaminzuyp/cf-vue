@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 
-const app = new Hono<{ Bindings: Env }>()
+const app = new Hono<{ Bindings: Env }>
 
 app.get('/api/chats', async (c) => {
   const { results } = await c.env.DB.prepare("SELECT * FROM chats").all()
