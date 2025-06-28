@@ -45,3 +45,4 @@ app.delete('/api/users/:id', async (c) => {
 app.get('*', async (c) => await c.env.ASSETS.fetch(c.req.raw))
 
 export default app
+
